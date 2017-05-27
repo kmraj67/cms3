@@ -1,7 +1,7 @@
 <?php
 /* include environment variables */
-if(is_file(dirname(__DIR__) . DS . '.env')) {
-    $vars = json_decode(file_get_contents(dirname(__DIR__) . DS . '.env'));
+if(is_file(dirname(__DIR__) . DS . 'app_keys.json')) {
+    $vars = json_decode(file_get_contents(dirname(__DIR__) . DS . 'app_keys.json'));
     foreach ($vars as $name => $val) {
         putenv("$name=$val");
     }   

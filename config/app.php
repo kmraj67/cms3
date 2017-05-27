@@ -182,7 +182,7 @@ return [
             // The following keys are used in SMTP transports
             'host' => env('EMAIL_HOST', null),
             'port' => env('EMAIL_PORT', null),
-            'timeout' => 30,
+            'timeout' => env('EMAIL_TIMEOUT', null),
             'username' => env('EMAIL_USER', null),
             'password' => env('EMAIL_PASS', null),
             'client' => null,
