@@ -1,0 +1,1 @@
+<div id="ajax_loader" style="display: none;"><div class="loader-inner"></div></div>

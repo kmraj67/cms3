@@ -1,0 +1,24 @@
+/* Login Container Start */
+.login-container .form-control {
+    height: 40px;
+}
+.login-container .form-horizontal {
+    margin-top: 20px;
+}
+/* Login Container End */
+
+
+.forgot-link {
+    text-transform: capitalize;
+    text-decoration: underline;
+    font-size: 14px;
+    color: #393939;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+}
+
+.error-message {
+    color: #a94442;
+    font-size: 14px;
+    font-weight: normal;
+}
