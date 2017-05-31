@@ -44,7 +44,7 @@
             </li>
             <li class="<?php if($controller=='Users'){echo 'active';} ?>">
                 <a href="javascript:;" data-toggle="collapse" data-target="#user-list">
-                    <i class="fa fa-fw fa-users"></i> Users <i class="fa fa-fw fa-caret-down"></i>
+                    <i class="fa fa-fw fa-users"></i> Users Management <i class="fa fa-fw fa-caret-down"></i>
                 </a>
                 <ul id="user-list" class="sub-menue <?php if($controller!='Users'){echo 'collapse';} ?>">
                     <li class="<?php if($controller=='Users' && $action=='add'){echo 'active';} ?>">

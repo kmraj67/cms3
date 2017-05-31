@@ -80,4 +80,15 @@ class EmailTemplatesTable extends Table
 
         return $rules;
     }
+    
+    public function isValid($id) {
+        if(!empty(trim($id))) {
+            $conditions = ['id' => trim($id)];            
+            $count = $this->find()->where($conditions)->count('*');
+            if($count >= 1) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

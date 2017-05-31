@@ -1,52 +1,81 @@
 <?php
-/**
-  * @var \App\View\AppView $this
-  */
+    $breadcrumb = [
+        'page_heading'=>'Email Templates',
+        'small_page_heading'=>'',
+        'links'=>[
+            'email-templates'=>['icon'=>'<i class="fa fa-envelope"></i>','title'=>'Email Templates'],
+            'email-templates/index'=>['icon'=>'<i class="fa fa-list"></i>','title'=>' All Templates']
+        ]
+    ];
+    echo $this->element('Layout/breadcrumb', $breadcrumb);
+    echo $this->Flash->render();
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Email Template'), ['action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="emailTemplates index large-9 medium-8 columns content">
-    <h3><?= __('Email Templates') ?></h3>
-    <table cellpadding="0" cellspacing="0">
-        <thead>
-            <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('slug') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('subject') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('created') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($emailTemplates as $emailTemplate): ?>
-            <tr>
-                <td><?= $this->Number->format($emailTemplate->id) ?></td>
-                <td><?= h($emailTemplate->slug) ?></td>
-                <td><?= h($emailTemplate->subject) ?></td>
-                <td><?= h($emailTemplate->created) ?></td>
-                <td><?= h($emailTemplate->modified) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $emailTemplate->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $emailTemplate->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $emailTemplate->id], ['confirm' => __('Are you sure you want to delete # {0}?', $emailTemplate->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+
+<div class="row search-box-row">
+    <div class="col-sm-4 col-md-4">&nbsp;</div>
+    <div class="col-sm-4 col-md-4">&nbsp;</div>
+    <div class="col-sm-4 col-md-4">
+        <form class="navbar-form pull-right" method="get" role="search">
+            <div class="input-group">
+                <?= $this->Form->input('key',['div'=>false,'label'=>false,'class'=>'form-control','placeholder'=>'Search by subject','value'=>$search_key]) ?>
+                <div class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row page">
+    <div class="col-lg-12">
+        <?php if(!empty($emailTemplates->toArray())): ?>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th width="30%"><?= $this->Paginator->sort('slug') ?></th>
+                        <th width="30%"><?= $this->Paginator->sort('subject') ?></th>
+                        <th width="15%"><?= $this->Paginator->sort('created') ?></th>
+                        <th width="15%"><?= $this->Paginator->sort('modified') ?></th>
+                        <th><!--Action--></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($emailTemplates as $row): //pr($row); ?>
+                <tr>
+                    <td><?= h($row->slug) ?></td>
+                    <td><?= h($row->subject) ?></td>
+                    <td class="text-center"><?= h($this->Common->dateFormat($row->created)) ?></td>
+                    <td class="text-center"><?= h($this->Common->dateFormat($row->modified)) ?></td>
+                    <td class="actions text-center">
+                        <div class="btn-group list-actions-dropdown">
+                            <a data-target="#" href="javascript:void(0);" data-toggle="dropdown" class="dropdown-toggle">
+                                <i class="glyphicon glyphicon-option-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <?= $this->Html->link(__('<i class="fa fa-eye"></i>&nbsp;View Deatils'), ['action' => 'view', $this->Common->encrypt($row->id)],['title'=>'View Template','escape'=>false]) ?>
+                                </li>
+                                <li>
+                                    <?= $this->Html->link(__('<i class="fa fa-edit"></i>&nbsp;Edit Template'), ['action' => 'edit', $this->Common->encrypt($row->id)],['title'=>'Edit Template','escape'=>false]) ?>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?= $this->element('pagination') ?>
+        <?php else: ?>
+        <div class="no-details-found">
+            <?php if(!empty($search_key)): ?>
+            <h1>No match found.</h1>
+            <?php else: ?>
+            <h1>No record found.</h1>
+            <?php endif; ?>
+        </div><!-- no-details-found -->
+        <?php endif; ?>
     </div>
 </div>

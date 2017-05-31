@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * EmailTemplates Controller
@@ -15,16 +16,36 @@ class EmailTemplatesController extends AppController {
         $this->loadmodel('EmailTemplates');
     }
     
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+    }
+    
     /**
      * Index method
      *
      * @return \Cake\Network\Response|null
      */
-    public function index()
-    {
+    public function index() {
+        $this->pageTitle = 'Email Templates';
+        $search_key = '';
+        $conditions = [];
+        
+        if($this->request->query('key')) {
+            $search_key = trim($this->request->query('key'));
+            if(!empty($search_key)) {
+                $conditions["subject LIKE"] = "%$search_key%";
+            }
+        }
+        
+        $this->paginate = [
+            'limit' => ADMIN_PAGE_LIMIT,
+            'order' => ['modified'=>'DESC'],
+            'contain' => [],
+            'conditions' => $conditions
+        ];
+        
         $emailTemplates = $this->paginate($this->EmailTemplates);
-
-        $this->set(compact('emailTemplates'));
+        $this->set(compact('emailTemplates','search_key'));
         $this->set('_serialize', ['emailTemplates']);
     }
 
@@ -35,14 +56,18 @@ class EmailTemplatesController extends AppController {
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
-    {
-        $emailTemplate = $this->EmailTemplates->get($id, [
-            'contain' => []
-        ]);
-
-        $this->set('emailTemplate', $emailTemplate);
-        $this->set('_serialize', ['emailTemplate']);
+    public function view($id = null) {
+        $id = $this->Common->decrypt($id);
+        if($this->EmailTemplates->isValid($id)) {
+            $emailTemplate = $this->EmailTemplates->get($id, [
+                'contain' => []
+            ]);    
+            $this->set('emailTemplate', $emailTemplate);
+            $this->set('_serialize', ['emailTemplate']);
+        } else {
+            $this->Flash->error(__('Invalid template ID.'));
+            return $this->redirect(['action' => 'index']);
+        }
     }
 
     /**
@@ -50,8 +75,7 @@ class EmailTemplatesController extends AppController {
      *
      * @return \Cake\Network\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
-    {
+    public function add() {
         $emailTemplate = $this->EmailTemplates->newEntity();
         if ($this->request->is('post')) {
             $emailTemplate = $this->EmailTemplates->patchEntity($emailTemplate, $this->request->data);
@@ -73,41 +97,26 @@ class EmailTemplatesController extends AppController {
      * @return \Cake\Network\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
-    {
-        $emailTemplate = $this->EmailTemplates->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $emailTemplate = $this->EmailTemplates->patchEntity($emailTemplate, $this->request->data);
-            if ($this->EmailTemplates->save($emailTemplate)) {
-                $this->Flash->success(__('The email template has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+    public function edit($id = null) {
+        $id = $this->Common->decrypt($id);
+        if($this->EmailTemplates->isValid($id)) {
+            $emailTemplate = $this->EmailTemplates->get($id, [
+                'contain' => []
+            ]);
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $emailTemplate = $this->EmailTemplates->patchEntity($emailTemplate, $this->request->data);
+                if ($this->EmailTemplates->save($emailTemplate)) {
+                    $this->Flash->success(__('The email template has been saved.'));
+    
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The email template could not be saved. Please, try again.'));
             }
-            $this->Flash->error(__('The email template could not be saved. Please, try again.'));
-        }
-        $this->set(compact('emailTemplate'));
-        $this->set('_serialize', ['emailTemplate']);
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Email Template id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $emailTemplate = $this->EmailTemplates->get($id);
-        if ($this->EmailTemplates->delete($emailTemplate)) {
-            $this->Flash->success(__('The email template has been deleted.'));
+            $this->set(compact('emailTemplate'));
+            $this->set('_serialize', ['emailTemplate']);
         } else {
-            $this->Flash->error(__('The email template could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Invalid template ID.'));
+            return $this->redirect(['action' => 'index']);
         }
-
-        return $this->redirect(['action' => 'index']);
     }
 }

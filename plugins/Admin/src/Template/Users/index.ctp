@@ -1,5 +1,4 @@
 <?php
-    //pr($users->toArray()); die;
     $breadcrumb = [
         'page_heading'=>'Users',
         'small_page_heading'=>'List',
@@ -9,9 +8,8 @@
         ]
     ];
     echo $this->element('Layout/breadcrumb', $breadcrumb);
+    echo $this->Flash->render();
 ?>
-
-<?= $this->Flash->render() ?>
 
 <div class="row search-box-row">
     <div class="col-sm-4 col-md-4">&nbsp;</div>

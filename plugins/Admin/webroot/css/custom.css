@@ -14,7 +14,7 @@
 
 .nav .sub-menue li.active a {
     color: #FFFFFF;
-    background: #000;
+    /*background: #000;*/
 }
 
 /* Ajax loader start */
