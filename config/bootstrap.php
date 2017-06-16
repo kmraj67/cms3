@@ -233,5 +233,6 @@ if (Configure::read('debug')) {
 
 Plugin::load('Admin', ['bootstrap' => false, 'routes' => true]);
 
+Configure::load('http_codes');
 Configure::load('site_keys');
 Configure::load('site_constants');

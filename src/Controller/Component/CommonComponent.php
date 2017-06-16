@@ -4,6 +4,7 @@ namespace App\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Mailer\Email;
+use Cake\Core\Configure;
 
 /**
  * Common component
@@ -96,5 +97,26 @@ class CommonComponent extends Component {
         } catch (Exception $e) {
             echo 'Exception : ',  $e->getMessage(), "<br />";
         }
+    }
+
+    public function getResponse($code, $status=null, $message=null) {
+        $response = Configure::read('http_codes.'.$code);
+        if(!empty($status)) {
+            $response['status'] = $status;    
+        }
+        if(!empty($message)) {
+            $response['message'] = $message;    
+        }
+        return $response;
+    }
+    
+    public function getErrors($errs) {
+        $errors = [];
+        foreach($errs as $key=>$val) {
+            foreach($val as $errVal) {
+                $errors[$key] = $errVal;
+            }
+        }
+        return $errors;
     }
 }
