@@ -27,8 +27,12 @@ class CommonComponent extends Component {
      *@param $value a string to append with time and rand functions
      *@return token
     */
-    public function genrateToken($value) {
-        return base64_encode(md5(time()*rand()).'-'.md5($value));
+    public function genrateToken($value, $is_base64=true) {
+        if($is_base64 === true) {
+            return base64_encode(md5(time()*rand()).''.md5($value));
+        } else {
+            return md5(time()*rand()).''.md5($value);    
+        }
     }
     
     /**

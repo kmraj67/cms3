@@ -17,6 +17,7 @@ class AppController extends BaseController {
 		$this->loadModel('Roles');
 		$this->loadModel('Statuses');
 		$this->loadModel('Settings');
+        $this->current_date = date('Y-m-d H:i:s');
 		$this->_loadConstants();
 	}
 
@@ -35,17 +36,18 @@ class AppController extends BaseController {
     }
 
     function _loadConstants() {
-        $statusRows = $this->Statuses->find();
-        foreach ($statusRows as $row) {
-            define(strtoupper($row->slug), $row->id);
-        }
-        $roleRows = $this->Roles->find();
-        foreach ($roleRows as $row) {
-            define(strtoupper($row->slug), $row->id);
-        }
         $settingRows = $this->Settings->find();
         foreach ($settingRows as $row) {
             define(strtoupper($row->key_field), $row->key_value);
         }
+    }
+    
+    function _serializeData($response) {
+        $serialize_data = [];
+        foreach($response as $key=>$val) {
+            $this->set($key, $val);
+            $serialize_data[] = $key;
+        }
+        $this->set('_serialize', $serialize_data);
     }
 }

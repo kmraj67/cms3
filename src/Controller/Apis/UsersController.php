@@ -18,7 +18,6 @@ class UsersController extends AppController {
 
     public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
-        $this->current_date = date('Y-m-d H:i:s');
     }
 
     /**
@@ -74,19 +73,20 @@ class UsersController extends AppController {
             $user = $this->Users->patchEntity($user, $user_data, ['validate'=>'saveUser']);
             if(empty($user->errors())) {
                 if ($this->Users->save($user)) {
-                    $response = $this->Common->getResponse('201','Success','User registered successfuly');
+                    $response = $this->Common->getResponse('201','success','User registered successfuly.');
+                    $response['user'] = $user;
                 } else {
-                    $response = $this->Common->getResponse('304','Error','User could not be registered, try again');
+                    $response = $this->Common->getResponse('304','error','User could not be registered, try again.');
                 }
             } else {
-                $response = Configure::read('http_codes.400');
-                $response = $this->Common->getResponse('400','Error','Validation errors');
+                $response = $this->Common->getResponse('400','error','Validation errors');
                 $response['errors'] = $this->Common->getErrors($user->errors());
             }
+        } else {
+            $response = $this->Common->getResponse('405');
         }
-        $response['user'] =  $user;
-        $this->set(compact('response'));
-        $this->set('_serialize', ['response']);
+        
+        $this->_serializeData($response);
     }
 
     /**
@@ -96,8 +96,7 @@ class UsersController extends AppController {
      * @return \Cake\Network\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
-    {
+    public function edit($id = null) {
         $user = $this->Users->get($id, [
             'contain' => []
         ]);
@@ -121,8 +120,7 @@ class UsersController extends AppController {
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
-    {
+    public function _delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
         if ($this->Users->delete($user)) {

@@ -81,6 +81,9 @@ Router::scope('/', function (RouteBuilder $routes) {
 
 Router::prefix('apis', function ($routes) {
     $routes->resources('Users');
+    $routes->connect('/login', ['controller' => 'Auths', 'action' => 'login']);
+    $routes->connect('/logout', ['controller' => 'Auths', 'action' => 'logout']);
+    $routes->connect('/change-password', ['controller' => 'Auths', 'action' => 'changePassword']);
     $routes->fallbacks(DashedRoute::class);
 });
 

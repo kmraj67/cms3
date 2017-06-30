@@ -323,7 +323,7 @@ class UsersTable extends Table
             'isValidOldPassword' => [
                 'rule' => ['isValidOldPassword',null],
                 'provider'=>'table',
-                'message' => 'Please check your password and try again.'
+                'message' => 'Current password is incorrect.'
             ]
         ])
         ->requirePresence('new_password')
@@ -350,7 +350,7 @@ class UsersTable extends Table
             ],
             'compare' => [
                 'rule' => ['compareWith','new_password'],
-                'message' => 'New password and confirm password does not match.'
+                'message' => 'New password and confirm password did not match.'
             ]
         ]);
     }
@@ -417,6 +417,20 @@ class UsersTable extends Table
         }
         $count = $this->find('all',$options)->count();
         if($count < 1) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     *@name: checkPassword
+     *@description: This function is used to check stored hash password with the input plain password.
+     *@param: $newPassword plain password
+     *@param: $oldPassword stored hash password
+     *@return: boolean true on match and false on not match
+    */
+    public function checkPassword($newPassword, $oldPassword) {
+        if ((new DefaultPasswordHasher)->check($newPassword, $oldPassword)) {
             return true;
         }
         return false;

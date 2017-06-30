@@ -65,14 +65,6 @@ class AppController extends BaseController {
     }
 
     function _loadConstants() {
-        $statusRows = $this->Statuses->find();
-        foreach ($statusRows as $row) {
-            define(strtoupper($row->slug), $row->id);
-        }
-        $roleRows = $this->Roles->find();
-        foreach ($roleRows as $row) {
-            define(strtoupper($row->slug), $row->id);
-        }
         $settingRows = $this->Settings->find();
         foreach ($settingRows as $row) {
             define(strtoupper($row->key_field), $row->key_value);
