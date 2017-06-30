@@ -366,10 +366,13 @@ class UsersTable extends Table
         return false;
     }
     
-    public function isEmailExists($value) {
+    public function isEmailExists($value,$params=[]) {
         $options = [
             'conditions' => ['Users.email'=>$value]
         ];
+        if(isset($params['data']['user_role_id']) && !empty($params['data']['user_role_id'])) {
+            $options['conditions']['Users.role_id'] = $params['data']['user_role_id'];
+        }
         $count = $this->find('all',$options)->count();
         if($count >= 1) {
             return true;

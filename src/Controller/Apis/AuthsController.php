@@ -136,4 +136,40 @@ class AuthsController extends AppController {
         }
         $this->_serializeData($response);
     }
+
+    public function forgotPassword() {
+        $response = $this->Common->getResponse('400');
+        if ($this->request->is('post')) {
+            $request_data = $this->request->input('json_decode', true);
+            $email = isset($request_data['email'])?$request_data['email']:'';
+            $token = $this->Common->genrateToken($email,false);
+            $user_data = [
+                'email' => $email,
+                'user_role_id' => USER
+            ];
+            $user = $this->Users->newEntity();
+            $user = $this->Users->patchEntity($user, $user_data, ['validate'=>'forgot']);
+            if(empty($user->errors())) {
+            	$updated_data = [
+            		'forgot_password_token' => $token,
+            		'modified' => $this->current_date
+            	];
+                if ($this->Users->updateAll($updated_data, ['email'=>$email])) {
+                	$reset_password_url = $this->base_url.'admin/reset-password?reset_token='.$token;
+                    $email_data = ['reset_url'=>$reset_password_url,'first_name'=>$user->first_name];
+                    $subject = 'Reset Password Link';
+                    //$this->Common->sendEmail($email,$subject,$email_data,'Admin.forgot_password','Admin.default');
+                    $response = $this->Common->getResponse('200','success','An email has been sent to the registered email ID, please check your email for further instructions.');
+                } else {
+                    $response = $this->Common->getResponse('304','error','Email could not be sent, please try again.');
+                }
+            } else {
+                $response = $this->Common->getResponse('400','error','Validation errors');
+                $response['errors'] = $this->Common->getErrors($user->errors());
+            }
+        } else {
+            $response = $this->Common->getResponse('405');
+        }
+        $this->_serializeData($response);
+    }
 }

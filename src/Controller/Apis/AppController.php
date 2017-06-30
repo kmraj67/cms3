@@ -10,6 +10,8 @@ use Cake\Core\Configure;
 
 class AppController extends BaseController {
 
+    public $base_url = '/';
+
 	public function initialize() {
 		parent::initialize();
 		$this->loadComponent('RequestHandler');
@@ -19,6 +21,7 @@ class AppController extends BaseController {
 		$this->loadModel('Settings');
         $this->current_date = date('Y-m-d H:i:s');
 		$this->_loadConstants();
+        $this->base_url = Router::url('/', true);
 	}
 
 	public function beforeFilter(Event $event) {
